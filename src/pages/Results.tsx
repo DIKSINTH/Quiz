@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Home, RotateCcw, Trophy, Share2, Copy, Check } from 'lucide-react';
-import { getPerformanceMessage, formatTime } from '../utils/quizUtils';
-import ScoreCard from '../components/ScoreCard';
+import React, { useState } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { Home, RotateCcw, Trophy, Share2, Copy, Check } from "lucide-react";
+import { getPerformanceMessage, formatTime } from "../utils/quizUtils";
+import ScoreCard from "../components/ScoreCard";
 
 interface ResultsState {
   score: number;
@@ -20,7 +20,7 @@ const Results: React.FC = () => {
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
 
   if (!state) {
-    navigate('/');
+    navigate("/");
     return null;
   }
 
@@ -28,20 +28,27 @@ const Results: React.FC = () => {
   const percentage = (score / totalQuestions) * 100;
   const performanceMessage = getPerformanceMessage(percentage);
 
-  const shareText = `🎯 Quiz Master Results 🎯\n\n📚 Category: ${category}\n🏆 Score: ${score}/${totalQuestions} (${percentage.toFixed(0)}%)\n⏱️ Time: ${formatTime(timeUsed)}\n\n${performanceMessage}\n\nTry the quiz yourself at ${window.location.origin}`;
+  const shareText = `🎯 Quiz Master Results 🎯\n\n📚 Category: ${category}\n🏆 Score: ${score}/${totalQuestions} (${percentage.toFixed(
+    0
+  )}%)\n⏱️ Time: ${formatTime(
+    timeUsed
+  )}\n\n${performanceMessage}\n\nTry the quiz yourself at ${
+    window.location.origin
+  }`;
 
   const handleCopyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       // Fallback for older browsers
-      const textArea = document.createElement('textarea');
+      const textArea = document.createElement("textarea");
       textArea.value = shareText;
       document.body.appendChild(textArea);
       textArea.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(textArea);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -52,13 +59,14 @@ const Results: React.FC = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Quiz Master Results',
+          title: "Quiz Master Results",
           text: shareText,
-          url: window.location.origin
+          url: window.location.origin,
         });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         // User cancelled sharing or error occurred
-        console.log('Share cancelled or failed');
+        console.log("Share cancelled or failed");
       }
     } else {
       handleCopyToClipboard();
@@ -66,19 +74,25 @@ const Results: React.FC = () => {
   };
 
   const handleTwitterShare = () => {
-    const twitterText = encodeURIComponent(`🎯 Just scored ${score}/${totalQuestions} on the ${category} quiz! ${performanceMessage} Try it yourself:`);
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodeURIComponent(window.location.origin)}`;
-    window.open(twitterUrl, '_blank', 'width=550,height=420');
+    const twitterText = encodeURIComponent(
+      `🎯 Just scored ${score}/${totalQuestions} on the ${category} quiz! ${performanceMessage} Try it yourself:`
+    );
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodeURIComponent(
+      window.location.origin
+    )}`;
+    window.open(twitterUrl, "_blank", "width=550,height=420");
   };
 
   const handleFacebookShare = () => {
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(shareText)}`;
-    window.open(facebookUrl, '_blank', 'width=550,height=420');
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      window.location.origin
+    )}&quote=${encodeURIComponent(shareText)}`;
+    window.open(facebookUrl, "_blank", "width=550,height=420");
   };
 
   const handleWhatsAppShare = () => {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -116,7 +130,7 @@ const Results: React.FC = () => {
               <RotateCcw className="w-5 h-5 mr-2" />
               Try Another Quiz
             </Link>
-            
+
             <Link
               to="/"
               className="flex items-center justify-center px-6 py-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium"
@@ -146,7 +160,7 @@ const Results: React.FC = () => {
                       <Share2 className="w-4 h-4 mr-3 text-blue-600" />
                       <span>Share via System</span>
                     </button>
-                    
+
                     <button
                       onClick={handleCopyToClipboard}
                       className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
@@ -156,12 +170,14 @@ const Results: React.FC = () => {
                       ) : (
                         <Copy className="w-4 h-4 mr-3 text-gray-600" />
                       )}
-                      <span>{copied ? 'Copied!' : 'Copy to Clipboard'}</span>
+                      <span>{copied ? "Copied!" : "Copy to Clipboard"}</span>
                     </button>
 
                     <div className="border-t pt-2">
-                      <p className="text-xs text-gray-500 mb-2">Share on social media:</p>
-                      
+                      <p className="text-xs text-gray-500 mb-2">
+                        Share on social media:
+                      </p>
+
                       <button
                         onClick={handleTwitterShare}
                         className="w-full flex items-center px-4 py-2 text-left hover:bg-blue-50 rounded-lg transition-colors"
@@ -169,7 +185,7 @@ const Results: React.FC = () => {
                         <div className="w-4 h-4 mr-3 bg-blue-400 rounded"></div>
                         <span>Twitter</span>
                       </button>
-                      
+
                       <button
                         onClick={handleFacebookShare}
                         className="w-full flex items-center px-4 py-2 text-left hover:bg-blue-50 rounded-lg transition-colors"
@@ -177,7 +193,7 @@ const Results: React.FC = () => {
                         <div className="w-4 h-4 mr-3 bg-blue-600 rounded"></div>
                         <span>Facebook</span>
                       </button>
-                      
+
                       <button
                         onClick={handleWhatsAppShare}
                         className="w-full flex items-center px-4 py-2 text-left hover:bg-green-50 rounded-lg transition-colors"
@@ -194,7 +210,7 @@ const Results: React.FC = () => {
 
           {/* Click outside to close share menu */}
           {shareMenuOpen && (
-            <div 
+            <div
               className="fixed inset-0 z-5"
               onClick={() => setShareMenuOpen(false)}
             />
@@ -206,33 +222,37 @@ const Results: React.FC = () => {
             </h2>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div className="p-4 bg-blue-50 rounded-lg">
-                <h3 className="font-semibold text-blue-800 mb-2">Time Management</h3>
+                <h3 className="font-semibold text-blue-800 mb-2">
+                  Time Management
+                </h3>
                 <p className="text-blue-700">
-                  {timeUsed < 180 ? 
-                    "Excellent! You completed the quiz efficiently with time to spare." : 
-                    timeUsed < 240 ?
-                    "Good pacing! You used your time well." :
-                    "Consider reading questions more quickly next time to save time."
-                  }
+                  {timeUsed < 180
+                    ? "Excellent! You completed the quiz efficiently with time to spare."
+                    : timeUsed < 240
+                    ? "Good pacing! You used your time well."
+                    : "Consider reading questions more quickly next time to save time."}
                 </p>
               </div>
               <div className="p-4 bg-green-50 rounded-lg">
-                <h3 className="font-semibold text-green-800 mb-2">Knowledge Level</h3>
+                <h3 className="font-semibold text-green-800 mb-2">
+                  Knowledge Level
+                </h3>
                 <p className="text-green-700">
-                  {percentage >= 90 ? 
-                    "Outstanding! You have excellent knowledge in this area!" : 
-                    percentage >= 70 ?
-                    "Great job! You have solid understanding of the topic." :
-                    percentage >= 50 ?
-                    "Good foundation! Consider reviewing the topic to improve further." :
-                    "Keep studying! Every expert was once a beginner."
-                  }
+                  {percentage >= 90
+                    ? "Outstanding! You have excellent knowledge in this area!"
+                    : percentage >= 70
+                    ? "Great job! You have solid understanding of the topic."
+                    : percentage >= 50
+                    ? "Good foundation! Consider reviewing the topic to improve further."
+                    : "Keep studying! Every expert was once a beginner."}
                 </p>
               </div>
             </div>
-            
+
             <div className="mt-4 p-4 bg-yellow-50 rounded-lg text-center">
-              <p className="text-yellow-800 font-medium">{performanceMessage}</p>
+              <p className="text-yellow-800 font-medium">
+                {performanceMessage}
+              </p>
             </div>
           </div>
         </div>

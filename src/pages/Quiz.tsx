@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
-import { questions, categories } from '../data/questions';
-import { Question, QuizState } from '../types/quiz';
-import { getRandomQuestions } from '../utils/quizUtils';
-import QuestionCard from '../components/QuestionCard';
-import Timer from '../components/Timer';
-import ProgressBar from '../components/ProgressBar';
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
+import { questions, categories } from "../data/questions";
+import { Question, QuizState } from "../types/quiz";
+import { getRandomQuestions } from "../utils/quizUtils";
+import QuestionCard from "../components/QuestionCard";
+import Timer from "../components/Timer";
+import ProgressBar from "../components/ProgressBar";
 
 const Quiz: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -18,8 +18,8 @@ const Quiz: React.FC = () => {
     answers: [],
     timeRemaining: 300, // 5 minutes
     isActive: false,
-    category: categoryId || '',
-    difficulty: 'mixed'
+    category: categoryId || "",
+    difficulty: "mixed",
   });
 
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -27,36 +27,45 @@ const Quiz: React.FC = () => {
   const [quizQuestions, setQuizQuestions] = useState<Question[]>([]);
   const [quizStartTime] = useState<number>(Date.now());
 
-  const category = categories.find(cat => cat.id === categoryId);
+  const category = categories.find((cat) => cat.id === categoryId);
 
   useEffect(() => {
     if (!category) {
-      navigate('/categories');
+      navigate("/categories");
       return;
     }
 
     // Get all questions for the category and randomize them
-    const categoryQuestions = questions.filter(q => q.category === categoryId);
+    const categoryQuestions = questions.filter(
+      (q) => q.category === categoryId
+    );
     const randomizedQuestions = getRandomQuestions(categoryQuestions, 10);
-    
+
     setQuizQuestions(randomizedQuestions);
-    setQuizState(prev => ({ ...prev, isActive: true }));
+    setQuizState((prev) => ({ ...prev, isActive: true }));
   }, [categoryId, category, navigate]);
 
   const handleTimeUp = useCallback(() => {
-    setQuizState(prev => ({ ...prev, isActive: false }));
+    setQuizState((prev) => ({ ...prev, isActive: false }));
     const finalScore = quizState.score;
     const timeUsed = 300 - quizState.timeRemaining;
-    navigate('/results', { 
-      state: { 
-        score: finalScore, 
-        totalQuestions: quizQuestions.length, 
+    navigate("/results", {
+      state: {
+        score: finalScore,
+        totalQuestions: quizQuestions.length,
         timeUsed,
-        category: category?.name || '',
-        quizId: quizStartTime
-      } 
+        category: category?.name || "",
+        quizId: quizStartTime,
+      },
     });
-  }, [navigate, quizState.score, quizState.timeRemaining, quizQuestions.length, category, quizStartTime]);
+  }, [
+    navigate,
+    quizState.score,
+    quizState.timeRemaining,
+    quizQuestions.length,
+    category,
+    quizStartTime,
+  ]);
 
   const handleAnswer = (answerIndex: number) => {
     if (selectedAnswer !== null) return;
@@ -64,32 +73,36 @@ const Quiz: React.FC = () => {
     setSelectedAnswer(answerIndex);
     setShowResult(true);
 
-    const isCorrect = answerIndex === quizQuestions[quizState.currentQuestion].correctAnswer;
-    
-    setQuizState(prev => ({
+    const isCorrect =
+      answerIndex === quizQuestions[quizState.currentQuestion].correctAnswer;
+
+    setQuizState((prev) => ({
       ...prev,
       answers: [...prev.answers, answerIndex],
-      score: isCorrect ? prev.score + 1 : prev.score
+      score: isCorrect ? prev.score + 1 : prev.score,
     }));
 
     setTimeout(() => {
       if (quizState.currentQuestion + 1 >= quizQuestions.length) {
         // Quiz completed
-        setQuizState(prev => ({ ...prev, isActive: false }));
+        setQuizState((prev) => ({ ...prev, isActive: false }));
         const finalScore = quizState.score + (isCorrect ? 1 : 0);
         const timeUsed = 300 - quizState.timeRemaining;
-        navigate('/results', { 
-          state: { 
-            score: finalScore, 
-            totalQuestions: quizQuestions.length, 
+        navigate("/results", {
+          state: {
+            score: finalScore,
+            totalQuestions: quizQuestions.length,
             timeUsed,
-            category: category?.name || '',
-            quizId: quizStartTime
-          } 
+            category: category?.name || "",
+            quizId: quizStartTime,
+          },
         });
       } else {
         // Next question
-        setQuizState(prev => ({ ...prev, currentQuestion: prev.currentQuestion + 1 }));
+        setQuizState((prev) => ({
+          ...prev,
+          currentQuestion: prev.currentQuestion + 1,
+        }));
         setSelectedAnswer(null);
         setShowResult(false);
       }
@@ -98,17 +111,24 @@ const Quiz: React.FC = () => {
 
   const handlePrevious = () => {
     if (quizState.currentQuestion > 0) {
-      setQuizState(prev => ({ ...prev, currentQuestion: prev.currentQuestion - 1 }));
-      setSelectedAnswer(quizState.answers[quizState.currentQuestion - 1] || null);
+      setQuizState((prev) => ({
+        ...prev,
+        currentQuestion: prev.currentQuestion - 1,
+      }));
+      setSelectedAnswer(
+        quizState.answers[quizState.currentQuestion - 1] || null
+      );
       setShowResult(false);
     }
   };
 
   const handleRestart = () => {
     // Generate new random questions for restart
-    const categoryQuestions = questions.filter(q => q.category === categoryId);
+    const categoryQuestions = questions.filter(
+      (q) => q.category === categoryId
+    );
     const newRandomizedQuestions = getRandomQuestions(categoryQuestions, 10);
-    
+
     setQuizQuestions(newRandomizedQuestions);
     setQuizState({
       currentQuestion: 0,
@@ -116,8 +136,8 @@ const Quiz: React.FC = () => {
       answers: [],
       timeRemaining: 300,
       isActive: true,
-      category: categoryId || '',
-      difficulty: 'mixed'
+      category: categoryId || "",
+      difficulty: "mixed",
     });
     setSelectedAnswer(null);
     setShowResult(false);
@@ -141,13 +161,13 @@ const Quiz: React.FC = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => navigate('/categories')}
+            onClick={() => navigate("/categories")}
             className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Categories
           </button>
-          
+
           <div className="flex items-center space-x-4">
             <button
               onClick={handleRestart}
@@ -167,7 +187,10 @@ const Quiz: React.FC = () => {
               </h1>
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-600">
-                  Score: <span className="font-semibold text-blue-600">{quizState.score}</span>
+                  Score:{" "}
+                  <span className="font-semibold text-blue-600">
+                    {quizState.score}
+                  </span>
                 </div>
                 <Timer
                   timeRemaining={quizState.timeRemaining}
@@ -176,9 +199,9 @@ const Quiz: React.FC = () => {
                 />
               </div>
             </div>
-            
-            <ProgressBar 
-              current={quizState.currentQuestion + 1} 
+
+            <ProgressBar
+              current={quizState.currentQuestion + 1}
               total={quizQuestions.length}
             />
           </div>
@@ -198,8 +221,8 @@ const Quiz: React.FC = () => {
               disabled={quizState.currentQuestion === 0}
               className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
                 quizState.currentQuestion === 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-600 text-white hover:bg-gray-700'
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-600 text-white hover:bg-gray-700"
               }`}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -208,17 +231,19 @@ const Quiz: React.FC = () => {
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Question {quizState.currentQuestion + 1} of {quizQuestions.length}
+                Question {quizState.currentQuestion + 1} of{" "}
+                {quizQuestions.length}
               </p>
             </div>
 
             <div className="w-24">
-              {showResult && quizState.currentQuestion + 1 < quizQuestions.length && (
-                <div className="flex items-center text-blue-600">
-                  <span className="text-sm">Next</span>
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </div>
-              )}
+              {showResult &&
+                quizState.currentQuestion + 1 < quizQuestions.length && (
+                  <div className="flex items-center text-blue-600">
+                    <span className="text-sm">Next</span>
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </div>
+                )}
             </div>
           </div>
         </div>

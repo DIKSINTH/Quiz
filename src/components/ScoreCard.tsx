@@ -1,5 +1,5 @@
 import React from "react";
-import { Trophy, Target, Clock, Star } from "lucide-react";
+import { Trophy, Target, Star } from "lucide-react";
 
 interface ScoreCardProps {
   score: number;

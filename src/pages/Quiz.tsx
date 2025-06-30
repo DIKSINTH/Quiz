@@ -16,7 +16,7 @@ const Quiz: React.FC = () => {
     currentQuestion: 0,
     score: 0,
     answers: [],
-    timeRemaining: 120, // 5 minutes
+    timeRemaining: 120, // 2 minutes
     isActive: false,
     category: categoryId || "",
     difficulty: "mixed",
